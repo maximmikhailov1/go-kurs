@@ -14,5 +14,9 @@ func init() {
 func main() {
 	r := gin.Default()
 	r.POST("/cars", controllers.CarsCreate)
+	r.GET("/cars", controllers.CarsIndex)
+	r.GET("/cars/:id", controllers.CarsShow)
+	r.PUT("/cars/:id", controllers.CarsUpdate)
+	r.DELETE("/cars/:id", controllers.CarsDelete)
 	r.Run() // listen and serve on localhost:8080
 }
