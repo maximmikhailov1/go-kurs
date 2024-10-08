@@ -1,6 +1,6 @@
 module github.com/maximmikhailov1/go-kurs
 
-go 1.23.2
+go 1.23.1
 
 require (
 	github.com/bytedance/sonic v1.12.3 // indirect
