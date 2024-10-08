@@ -18,7 +18,7 @@ func CarsCreate(c *gin.Context) {
 	}
 	c.Bind(&body)
 	// Создать машину
-	car := models.Cars{
+	car := models.Car{
 		Firm_name:        body.Firm_name,
 		Model_name:       body.Model_name,
 		Reg_plate_number: body.Reg_plate_number,
@@ -37,7 +37,7 @@ func CarsCreate(c *gin.Context) {
 	})
 }
 func CarsIndex(c *gin.Context) {
-	var cars []models.Cars
+	var cars []models.Car
 	result := initializers.DB.Find(&cars)
 
 	if result.Error != nil {
@@ -54,7 +54,7 @@ func CarsShow(c *gin.Context) {
 	id := c.Param("id")
 
 	//Получить машину с нужным id
-	var car models.Cars
+	var car models.Car
 	result := initializers.DB.First(&car, id)
 
 	if result.Error != nil {
@@ -81,14 +81,14 @@ func CarsUpdate(c *gin.Context) {
 	}
 	c.Bind(&body)
 	//Получить машину с нужным id
-	var car models.Cars
+	var car models.Car
 	result := initializers.DB.First(&car, id)
 	if result.Error != nil {
 		c.Status(400)
 		return
 	}
 	// Обновить данные
-	initializers.DB.Model(&car).Updates(models.Cars{
+	initializers.DB.Model(&car).Updates(models.Car{
 		Firm_name:        body.Firm_name,
 		Model_name:       body.Model_name,
 		Reg_plate_number: body.Reg_plate_number,
@@ -105,7 +105,7 @@ func CarsDelete(c *gin.Context) {
 	//Получить id машины
 	id := c.Param("id")
 	//Удалить машину
-	result := initializers.DB.Delete(&models.Cars{}, id)
+	result := initializers.DB.Delete(&models.Car{}, id)
 	//Ответить о результате
 	if result.Error != nil {
 		c.Status(400)

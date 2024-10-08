@@ -18,5 +18,5 @@ func main() {
 	r.GET("/cars/:id", controllers.CarsShow)
 	r.PUT("/cars/:id", controllers.CarsUpdate)
 	r.DELETE("/cars/:id", controllers.CarsDelete)
-	r.Run() // listen and serve on localhost:8080
+	r.Run() // listen and serve on localhost:3000
 }
