@@ -6,26 +6,25 @@ import (
 	"github.com/maximmikhailov1/go-kurs/models"
 )
 
-func CarsCreate(c *gin.Context) {
+func UserCreate(c *gin.Context) {
 	// Получить машину
 	var body struct {
-		Firm_name        string
-		Model_name       string
-		Reg_plate_number string
-		Rent             int
-		Is_detailed      bool
-		Is_being_used    bool
+		First_name string
+		Last_name  string
+		Patronymic string
+		Username   string
+		CarID      int
 	}
 	c.Bind(&body)
 	// Создать машину
-	car := models.Car{
-		Firm_name:        body.Firm_name,
-		Model_name:       body.Model_name,
-		Reg_plate_number: body.Reg_plate_number,
-		Rent:             body.Rent,
-		Is_detailed:      body.Is_detailed,
-		Is_being_used:    body.Is_detailed}
-	result := initializers.DB.Create(&car)
+	user := models.User{
+		First_name: body.First_name,
+		Last_name:  body.Last_name,
+		Patronymic: body.Patronymic,
+		Username:   body.Last_name,
+		CarID:      body.CarID,
+	}
+	result := initializers.DB.Create(&user)
 
 	if result.Error != nil {
 		c.Status(400)
@@ -33,10 +32,10 @@ func CarsCreate(c *gin.Context) {
 	}
 	// Вернуть её
 	c.JSON(200, gin.H{
-		"car": car,
+		"user": user,
 	})
 }
-func CarsIndex(c *gin.Context) {
+func UsersIndex(c *gin.Context) {
 	var cars []models.Car
 	result := initializers.DB.Find(&cars)
 
@@ -49,7 +48,7 @@ func CarsIndex(c *gin.Context) {
 		"cars": cars,
 	})
 }
-func CarsShow(c *gin.Context) {
+func UsersShow(c *gin.Context) {
 	//Получить URL с id
 	id := c.Param("id")
 
@@ -66,7 +65,7 @@ func CarsShow(c *gin.Context) {
 		"car": car,
 	})
 }
-func CarsUpdate(c *gin.Context) {
+func UsersUpdate(c *gin.Context) {
 	//Получить URL с id
 	id := c.Param("id")
 
@@ -75,6 +74,7 @@ func CarsUpdate(c *gin.Context) {
 		Firm_name        string
 		Model_name       string
 		Reg_plate_number string
+		VIN_number       string
 		Rent             int
 		Is_detailed      bool
 		Is_being_used    bool
@@ -92,6 +92,7 @@ func CarsUpdate(c *gin.Context) {
 		Firm_name:        body.Firm_name,
 		Model_name:       body.Model_name,
 		Reg_plate_number: body.Reg_plate_number,
+		VIN_number:       body.VIN_number,
 		Rent:             body.Rent,
 		Is_detailed:      body.Is_detailed,
 		Is_being_used:    body.Is_being_used,
@@ -101,7 +102,7 @@ func CarsUpdate(c *gin.Context) {
 		"car": car,
 	})
 }
-func CarsDelete(c *gin.Context) {
+func UsersDelete(c *gin.Context) {
 	//Получить id машины
 	id := c.Param("id")
 	//Удалить машину

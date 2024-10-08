@@ -12,6 +12,7 @@ func CarCreate(c *gin.Context) {
 		Firm_name        string
 		Model_name       string
 		Reg_plate_number string
+		VIN_number       string
 		Rent             int
 		Is_detailed      bool
 		Is_being_used    bool
@@ -22,9 +23,11 @@ func CarCreate(c *gin.Context) {
 		Firm_name:        body.Firm_name,
 		Model_name:       body.Model_name,
 		Reg_plate_number: body.Reg_plate_number,
+		VIN_number:       body.VIN_number,
 		Rent:             body.Rent,
 		Is_detailed:      body.Is_detailed,
-		Is_being_used:    body.Is_detailed}
+		Is_being_used:    body.Is_detailed,
+	}
 	result := initializers.DB.Create(&car)
 
 	if result.Error != nil {
@@ -36,7 +39,7 @@ func CarCreate(c *gin.Context) {
 		"car": car,
 	})
 }
-func CarIndex(c *gin.Context) {
+func CarsIndex(c *gin.Context) {
 	var cars []models.Car
 	result := initializers.DB.Find(&cars)
 
@@ -75,6 +78,7 @@ func CarUpdate(c *gin.Context) {
 		Firm_name        string
 		Model_name       string
 		Reg_plate_number string
+		VIN_number       string
 		Rent             int
 		Is_detailed      bool
 		Is_being_used    bool
@@ -92,6 +96,7 @@ func CarUpdate(c *gin.Context) {
 		Firm_name:        body.Firm_name,
 		Model_name:       body.Model_name,
 		Reg_plate_number: body.Reg_plate_number,
+		VIN_number:       body.VIN_number,
 		Rent:             body.Rent,
 		Is_detailed:      body.Is_detailed,
 		Is_being_used:    body.Is_being_used,

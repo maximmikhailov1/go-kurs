@@ -8,5 +8,6 @@ type User struct {
 	Last_name  string
 	Patronymic string
 	Username   string
+	CarID      int
 	Car        Car
 }
