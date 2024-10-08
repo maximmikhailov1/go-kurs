@@ -37,7 +37,7 @@ func CarCreate(c *gin.Context) {
 	})
 }
 func CarIndex(c *gin.Context) {
-	var cars []models.Cars
+	var cars []models.Car
 	result := initializers.DB.Find(&cars)
 
 	if result.Error != nil {
