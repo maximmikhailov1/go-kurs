@@ -11,6 +11,7 @@ func init() {
 	initializers.ConnectToDB()
 }
 
+// TODO: Человек пришёл со своей машиной
 func main() {
 	r := gin.Default()
 	r.POST("/cars", controllers.CarCreate)
@@ -18,5 +19,10 @@ func main() {
 	r.GET("/cars/:id", controllers.CarShow)
 	r.PUT("/cars/:id", controllers.CarUpdate)
 	r.DELETE("/cars/:id", controllers.CarDelete)
+	r.POST("/users", controllers.UserCreate)
+	r.GET("/users", controllers.UsersIndex)
+	r.GET("/users/:id", controllers.UserShow)
+	r.PUT("/users/:id", controllers.UserUpdate)
+	r.DELETE("/user/:id", controllers.UserDelete)
 	r.Run() // listen and serve on localhost:3000
 }

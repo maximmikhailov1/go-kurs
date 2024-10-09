@@ -1,33 +1,41 @@
 package controllers
 
 import (
+	"errors"
+	"log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/maximmikhailov1/go-kurs/initializers"
 	"github.com/maximmikhailov1/go-kurs/models"
+	"gorm.io/gorm"
 )
 
 func UserCreate(c *gin.Context) {
-	// Получить машину
+	// Получить пользователя
 	var body struct {
 		First_name string
 		Last_name  string
 		Patronymic string
 		Username   string
-		CarID      int
+		CarID      uint
 	}
 	c.Bind(&body)
-	// Создать машину
+	// Создать пользователя
 	user := models.User{
 		First_name: body.First_name,
 		Last_name:  body.Last_name,
 		Patronymic: body.Patronymic,
-		Username:   body.Last_name,
-		CarID:      body.CarID,
+		Username:   body.Username,
 	}
 	result := initializers.DB.Create(&user)
 
 	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrDuplicatedKey) {
+			c.JSON(400, gin.H{"message": "Username already exists"})
+			log.Println(result.Error)
+		}
 		c.Status(400)
+
 		return
 	}
 	// Вернуть её
@@ -36,8 +44,8 @@ func UserCreate(c *gin.Context) {
 	})
 }
 func UsersIndex(c *gin.Context) {
-	var cars []models.Car
-	result := initializers.DB.Find(&cars)
+	var users []models.User
+	result := initializers.DB.Find(&users)
 
 	if result.Error != nil {
 		c.Status(400)
@@ -45,16 +53,16 @@ func UsersIndex(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"cars": cars,
+		"users": users,
 	})
 }
-func UsersShow(c *gin.Context) {
+func UserShow(c *gin.Context) {
 	//Получить URL с id
 	id := c.Param("id")
 
-	//Получить машину с нужным id
-	var car models.Car
-	result := initializers.DB.First(&car, id)
+	//Получить пользователя с нужным id
+	var user models.User
+	result := initializers.DB.First(&user, id)
 
 	if result.Error != nil {
 		c.Status(400)
@@ -62,51 +70,47 @@ func UsersShow(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"car": car,
+		"user": user,
 	})
 }
-func UsersUpdate(c *gin.Context) {
+func UserUpdate(c *gin.Context) {
 	//Получить URL с id
 	id := c.Param("id")
 
-	// Получить машину
+	// Получить пользователя
 	var body struct {
-		Firm_name        string
-		Model_name       string
-		Reg_plate_number string
-		VIN_number       string
-		Rent             int
-		Is_detailed      bool
-		Is_being_used    bool
+		First_name string
+		Last_name  string
+		Patronymic string
+		Username   string
+		CarID      uint
 	}
 	c.Bind(&body)
 	//Получить машину с нужным id
-	var car models.Car
-	result := initializers.DB.First(&car, id)
+	var user models.User
+	result := initializers.DB.First(&user, id)
 	if result.Error != nil {
 		c.Status(400)
 		return
 	}
 	// Обновить данные
-	initializers.DB.Model(&car).Updates(models.Car{
-		Firm_name:        body.Firm_name,
-		Model_name:       body.Model_name,
-		Reg_plate_number: body.Reg_plate_number,
-		VIN_number:       body.VIN_number,
-		Rent:             body.Rent,
-		Is_detailed:      body.Is_detailed,
-		Is_being_used:    body.Is_being_used,
+	initializers.DB.Model(&user).Updates(models.User{
+		First_name: body.First_name,
+		Last_name:  body.Last_name,
+		Patronymic: body.Patronymic,
+		Username:   body.Username,
+		CarID:      body.CarID,
 	})
 	//Ответить обновленными данными
 	c.JSON(200, gin.H{
-		"car": car,
+		"user": user,
 	})
 }
-func UsersDelete(c *gin.Context) {
-	//Получить id машины
+func UserDelete(c *gin.Context) {
+	//Получить id пользователя
 	id := c.Param("id")
 	//Удалить машину
-	result := initializers.DB.Delete(&models.Car{}, id)
+	result := initializers.DB.Delete(&models.User{}, id)
 	//Ответить о результате
 	if result.Error != nil {
 		c.Status(400)
