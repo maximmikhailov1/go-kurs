@@ -9,5 +9,4 @@ type Car struct {
 	Rent             int
 	Is_detailed      bool
 	Is_being_used    bool
-	User             User `gorm:"foreignKey:CarID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }

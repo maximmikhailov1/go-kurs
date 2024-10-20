@@ -1,9 +1,13 @@
 package main
 
 import (
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/gin-gonic/gin"
-	"github.com/maximmikhailov1/go-kurs/controllers"
 	"github.com/maximmikhailov1/go-kurs/initializers"
+	"github.com/maximmikhailov1/go-kurs/routes"
 )
 
 func init() {
@@ -14,15 +18,13 @@ func init() {
 // TODO: Человек пришёл со своей машиной
 func main() {
 	r := gin.Default()
-	r.POST("/cars", controllers.CarCreate)
-	r.GET("/cars", controllers.CarsIndex)
-	r.GET("/cars/:id", controllers.CarShow)
-	r.PUT("/cars/:id", controllers.CarUpdate)
-	r.DELETE("/cars/:id", controllers.CarDelete)
-	r.POST("/users", controllers.UserCreate)
-	r.GET("/users", controllers.UsersIndex)
-	r.GET("/users/:id", controllers.UserShow)
-	r.PUT("/users/:id", controllers.UserUpdate)
-	r.DELETE("/user/:id", controllers.UserDelete)
-	r.Run() // listen and serve on localhost:3000
+	routes.SetupRoutes(r)
+	s := &http.Server{
+		Addr:           os.Getenv("LOCAL_URL"),
+		Handler:        r,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
+	s.ListenAndServe() // listen and serve on localhost:3000
 }
