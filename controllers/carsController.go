@@ -1,121 +1,124 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
+	"fmt"
+	"github.com/gofiber/fiber/v2"
 	"github.com/maximmikhailov1/go-kurs/initializers"
 	"github.com/maximmikhailov1/go-kurs/models"
+	"net/http"
 )
 
-func CarCreate(c *gin.Context) {
+func CarCreate(c *fiber.Ctx) error {
 	// Получить машину
-	var body struct {
-		Firm_name        string
-		Model_name       string
-		Reg_plate_number string
-		VIN_number       string
-		Rent             int
-		Is_detailed      bool
-		Is_being_used    bool
+	var car models.Car
+	err := c.BodyParser(&car)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": "failed to parse form to car model",
+			"error":   err.Error(),
+		})
 	}
-	c.Bind(&body)
 	// Создать машину
-	car := models.Car{
-		Firm_name:        body.Firm_name,
-		Model_name:       body.Model_name,
-		Reg_plate_number: body.Reg_plate_number,
-		VIN_number:       body.VIN_number,
-		Rent:             body.Rent,
-		Is_detailed:      body.Is_detailed,
-		Is_being_used:    body.Is_detailed,
-	}
 	result := initializers.DB.Create(&car)
 
 	if result.Error != nil {
-		c.Status(400)
-		return
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": "failed to create a car",
+			"error":   result.Error.Error(),
+		})
 	}
 	// Вернуть её
-	c.JSON(200, gin.H{
-		"car": car,
+	return c.Status(200).JSON(fiber.Map{
+		"message": "car successfully created",
+		"car":     car,
 	})
 }
-func CarsIndex(c *gin.Context) {
+func CarsIndex(c *fiber.Ctx) error {
 	var cars []models.Car
 	result := initializers.DB.Find(&cars)
 
 	if result.Error != nil {
-		c.Status(400)
-		return
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": "failed to find any cars",
+			"error":   result.Error.Error(),
+		})
 	}
 
-	c.JSON(200, gin.H{
-		"cars": cars,
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "found cars successfully",
+		"cars":    cars,
 	})
 }
-func CarShow(c *gin.Context) {
+func CarShow(c *fiber.Ctx) error {
 	//Получить URL с id
-	id := c.Param("id")
+	id := c.Params("id")
 
 	//Получить машину с нужным id
 	var car models.Car
 	result := initializers.DB.First(&car, id)
 
 	if result.Error != nil {
-		c.Status(400)
-		return
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": "failed to find a car with given id",
+			"error":   result.Error.Error(),
+		})
 	}
 
-	c.JSON(200, gin.H{
-		"car": car,
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"message": fmt.Sprintf("found car id:%v succesfully", id),
+		"car":     car,
 	})
 }
-func CarUpdate(c *gin.Context) {
+func CarUpdate(c *fiber.Ctx) error {
 	//Получить URL с id
-	id := c.Param("id")
+	id := c.Params("id")
 
 	// Получить машину
-	var body struct {
-		Firm_name        string
-		Model_name       string
-		Reg_plate_number string
-		VIN_number       string
-		Rent             int
-		Is_detailed      bool
-		Is_being_used    bool
+	var carNew models.Car
+	var carOld models.Car
+	err := c.BodyParser(&carNew)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": "failed to parse form to car",
+			"error":   err.Error(),
+		})
 	}
-	c.Bind(&body)
 	//Получить машину с нужным id
-	var car models.Car
-	result := initializers.DB.First(&car, id)
+	result := initializers.DB.First(&carOld, id)
 	if result.Error != nil {
-		c.Status(400)
-		return
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": fmt.Sprintf("failed to find car with id %v", id),
+			"error":   result.Error.Error(),
+		})
+	}
+	result = initializers.DB.Model(&carOld).Updates(&carNew)
+	if result.Error != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": fmt.Sprintf("failed to update car with id %v", id),
+			"error":   result.Error.Error(),
+		})
 	}
 	// Обновить данные
-	initializers.DB.Model(&car).Updates(models.Car{
-		Firm_name:        body.Firm_name,
-		Model_name:       body.Model_name,
-		Reg_plate_number: body.Reg_plate_number,
-		VIN_number:       body.VIN_number,
-		Rent:             body.Rent,
-		Is_detailed:      body.Is_detailed,
-		Is_being_used:    body.Is_being_used,
-	})
 	//Ответить обновленными данными
-	c.JSON(200, gin.H{
-		"car": car,
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"message": fmt.Sprintf("updated car with id %v successfully", id),
+		"car":     carNew,
 	})
 }
-func CarDelete(c *gin.Context) {
+func CarDelete(c *fiber.Ctx) error {
 	//Получить id машины
-	id := c.Param("id")
+	id := c.Params("id")
 	//Удалить машину
 	result := initializers.DB.Delete(&models.Car{}, id)
 	//Ответить о результате
 	if result.Error != nil {
-		c.Status(400)
-		return
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": "failed to delete car",
+			"error":   result.Error.Error(),
+		})
 	}
-	c.Status(200)
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "car deleted successfully",
+	})
 
 }

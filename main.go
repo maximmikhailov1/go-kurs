@@ -1,13 +1,10 @@
 package main
 
 import (
-	"net/http"
-	"os"
-	"time"
-
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 	"github.com/maximmikhailov1/go-kurs/initializers"
 	"github.com/maximmikhailov1/go-kurs/routes"
+	"log"
 )
 
 func init() {
@@ -17,14 +14,10 @@ func init() {
 
 // TODO: Человек пришёл со своей машиной
 func main() {
-	r := gin.Default()
-	routes.SetupRoutes(r)
-	s := &http.Server{
-		Addr:           os.Getenv("LOCAL_URL"),
-		Handler:        r,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20,
+	app := fiber.New()
+	routes.SetupRoutes(app)
+	err := app.Listen(":8080")
+	if err != nil {
+		log.Fatal(err.Error())
 	}
-	s.ListenAndServe() // listen and serve on localhost:3000
 }

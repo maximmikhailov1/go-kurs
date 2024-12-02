@@ -18,3 +18,7 @@ func ConnectToDB() {
 		log.Fatal("Failde to connect to database")
 	}
 }
+
+//отказоустойчивость
+//защита от перегруженности
+//1 3 para

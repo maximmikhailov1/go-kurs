@@ -1,19 +1,21 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 	"github.com/maximmikhailov1/go-kurs/controllers"
 )
 
-func SetupRoutes(r *gin.Engine) {
-	r.POST("/cars", controllers.CarCreate)
-	r.GET("/cars", controllers.CarsIndex)
-	r.GET("/cars/:id", controllers.CarShow)
-	r.PUT("/cars/:id", controllers.CarUpdate)
-	r.DELETE("/cars/:id", controllers.CarDelete)
-	r.POST("/users", controllers.UserCreate)
-	r.GET("/users", controllers.UsersIndex)
-	r.GET("/users/:id", controllers.UserShow)
-	r.PUT("/users/:id", controllers.UserUpdate)
-	r.DELETE("/user/:id", controllers.UserDelete)
+func SetupRoutes(app *fiber.App) {
+	app.Static("/static", "./public/assets")
+
+	app.Post("/api/cars", controllers.CarCreate)
+	app.Get("/api/cars", controllers.CarsIndex)
+	app.Get("/api/cars/:id", controllers.CarShow)
+	app.Put("/api/cars/:id", controllers.CarUpdate)
+	app.Delete("/api/cars/:id", controllers.CarDelete)
+	app.Post("/api/drivers", controllers.DriverCreate)
+	app.Get("/api/drivers", controllers.DriversIndex)
+	app.Get("/api/drivers/:id", controllers.DriverShow)
+	app.Put("/api/drivers/:id", controllers.DriverUpdate)
+	app.Delete("/api/drivers/:id", controllers.DriverDelete)
 }

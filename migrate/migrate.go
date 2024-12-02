@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/maximmikhailov1/go-kurs/initializers"
 	"github.com/maximmikhailov1/go-kurs/models"
+	"log"
 )
 
 func init() {
@@ -11,5 +12,8 @@ func init() {
 }
 
 func main() {
-	initializers.DB.AutoMigrate(&models.User{}, &models.Car{})
+	err := initializers.DB.AutoMigrate(&models.Driver{}, &models.Car{}, &models.Client{}, &models.Order{})
+	if err != nil {
+		log.Fatalf("Failed to migrate: %s", err.Error())
+	}
 }
