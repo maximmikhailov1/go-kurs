@@ -7,6 +7,7 @@ type Car struct {
 	RegPlateNumber string
 	VinNumber      string
 	Rent           int
+	Color          string
 	IsDetailed     bool
 	IsBeingUsed    bool
 }

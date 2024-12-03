@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аутентификация</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 0.5rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .toggle-btn {
+            background-color: transparent;
+            color: #007bff;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1rem;
+        }
+        .toggle-btn:hover {
+            text-decoration: underline;
+        }
+        .error {
+            color: red;
+            text-align: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 id="formTitle">Вход</h2>
+    <form id="authForm">
+        <div class="form-group">
+            <label for="username">Имя пользователя</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div id="registerFields" style="display: none;">
+            <div class="form-group">
+                <label for="firstname">Имя</label>
+                <input type="text" id="firstname" name="firstname">
+            </div>
+            <div class="form-group">
+                <label for="secondname">Фамилия</label>
+                <input type="text" id="secondname" name="secondname">
+            </div>
+        </div>
+        <button type="submit">Отправить</button>
+    </form>
+    <p id="toggleText" style="text-align: center; margin-top: 1rem;">
+        Нет аккаунта? <button type="button" class="toggle-btn" id="toggleBtn">Зарегистрироваться</button>
+    </p>
+    <p id="errorMessage" class="error"></p>
+</div>
+
+<script>
+    const form = document.getElementById('authForm');
+    const formTitle = document.getElementById('formTitle');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const toggleText = document.getElementById('toggleText');
+    const registerFields = document.getElementById('registerFields');
+    const errorMessage = document.getElementById('errorMessage');
+    let isLogin = true;
+    function toggleForm() {
+        isLogin = !isLogin;
+        if (isLogin) {
+            formTitle.textContent = 'Вход';
+            toggleText.innerHTML = 'Нет аккаунта? <button type="button" class="toggle-btn" id="toggleBtn">Зарегистрироваться</button>';
+            registerFields.style.display = 'none';
+        } else {
+            formTitle.textContent = 'Регистрация';
+            toggleText.innerHTML = 'Уже есть аккаунт? <button type="button" class="toggle-btn" id="toggleBtn">Войти</button>';
+            registerFields.style.display = 'block';
+        }
+        errorMessage.textContent = '';
+
+        // Обновляем обработчик событий для новой кнопки
+        document.getElementById('toggleBtn').addEventListener('click', toggleForm);
+    }
+
+    // Инициализация обработчика событий для начальной кнопки
+    document.getElementById('toggleBtn').addEventListener('click', toggleForm);
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        if (isLogin) {
+            // Здесь должна быть логика для входа
+
+            console.log('Вход:', {username, password});
+            if (username && password) {
+                try {
+                    const response = await fetch('/api/client/sign-in', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({username, password})
+                    });
+
+                    if (response.ok) {
+                        // Успешный вход
+                        window.location.href = '/'; // Перенаправление на главную страницу
+                    } else {
+                        // Ошибка входа
+                        const error = await response.json();
+                        alert(error.message);
+                    }
+                } catch (error) {
+                    console.error('Ошибка при отправке формы входа:', error);
+                }
+                // Здесь можно добавить перенаправление на другую страницу
+            } else {
+                errorMessage.textContent = 'Неверное имя пользователя или пароль';
+            }
+        } else {
+            const firstName = document.getElementById('firstname').value;
+            const secondName = document.getElementById('secondname').value;
+            // Здесь должна быть логика для регистрации
+            try {
+                const response = await fetch('/api/client/sign-up', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password, firstName, secondName})
+                });
+
+                if (response.ok) {
+                    // Успешная регистрация
+                    alert('Регистрация прошла успешно! Вы можете войти.');
+                    //window.location.href = '/auth';
+                } else {
+                    // Ошибка регистрации
+                    const error = await response.json();
+                    alert(error.message);
+                }
+            } catch (error) {
+                console.error('Ошибка при отправке формы регистрации:', error);
+            }
+            console.log('Регистрация:', {username, password, firstName, secondName});
+            if (username && password && firstName && secondName) {
+                // Здесь можно добавить перенаправление на другую страницу
+            } else {
+                errorMessage.textContent = 'Пожалуйста, заполните все поля';
+            }
+        }
+    });
+</script>
+</body>
+</html>
