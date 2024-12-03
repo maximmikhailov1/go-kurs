@@ -15,6 +15,12 @@ func SetupRoutes(app *fiber.App) {
 	app.Get("/orders", controllers.OrderRender)
 	app.Get("/order-taxi", controllers.OrderTaxiCreateAndRender)
 	app.Get("/authClient", controllers.AuthRender)
+
+	app.Get("/drivers", controllers.DriverRender)
+
+	app.Post("/api/driver/sign-in", controllers.SignInDriver)
+	app.Post("/api/driver/sign-up", controllers.SignUpDriver)
+
 	app.Post("/api/client/sign-in", controllers.SignInClient)
 	app.Post("/api/client/sign-up", controllers.SignUpClient)
 	app.Post("/api/logout", controllers.Logout)

@@ -6,7 +6,7 @@ type Driver struct {
 	gorm.Model
 	ID         uint `gorm:"primaryKey"`
 	FirstName  string
-	LastName   string
+	SecondName string
 	Patronymic string
 	Username   string `gorm:"uniqueIndex"`
 	Password   string

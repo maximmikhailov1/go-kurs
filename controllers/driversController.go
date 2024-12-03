@@ -9,6 +9,10 @@ import (
 	"github.com/maximmikhailov1/go-kurs/models"
 )
 
+func DriverRender(c *fiber.Ctx) error {
+	return c.Render("authDriver", fiber.Map{})
+}
+
 func DriverCreate(c *fiber.Ctx) error {
 	// Получить пользователя
 	var driver models.Driver
