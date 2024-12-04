@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Машины водителя</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        #current-car, #available-cars {
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        #car-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .car-item {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<h1>Машины водителя</h1>
+<div id="current-car">
+    <h2>Текущая машина</h2>
+    <p id="current-car-info">Загрузка...</p>
+</div>
+<div id="available-cars">
+    <h2>Доступные машины</h2>
+    <ul id="car-list"></ul>
+</div>
+
+<script>
+
+
+        // Функция для получения текущей машины водителя
+    async function getCurrentCar() {
+        try {
+            let responseDriverId = await fetch("/api/drivers/get-id");
+            let driverId = await responseDriverId.json()
+            const response = await fetch(`/api/drivers/${driverId}/car`);
+            const car = await response.json();
+            document.getElementById('current-car-info').textContent = `Марка: ${car.FirmName},
+             Модель: ${car.ModelName}, Цвет: ${car.Color}`;
+        } catch (error) {
+            console.error('Ошибка при получении текущей машины:', error);
+            document.getElementById('current-car-info').textContent = 'Ошибка при загрузке данных';
+        }
+    }
+
+    // Функция для получения списка доступных машин
+    async function getAvailableCars() {
+        try {
+            const response = await fetch('/api/cars/not-used');
+            const cars = await response.json();
+            const carList = document.getElementById('car-list');
+            carList.innerHTML = '';
+            cars.forEach(car => {
+                const li = document.createElement('li');
+                li.className = 'car-item';
+                li.innerHTML = `
+                        <span>Марка: ${car.FirmName}, Модель: ${car.ModelName}, Цвет ${car.Color}</span>
+                        <button onclick="selectCar('${car.ID}')">Выбрать</button>
+                    `;
+                carList.appendChild(li);
+            });
+        } catch (error) {
+            console.error('Ошибка при получении доступных машин:', error);
+            document.getElementById('car-list').innerHTML = '<li>Ошибка при загрузке данных</li>';
+        }
+    }
+
+    // Функция для выбора новой машины
+    async function selectCar(carId) {
+        try {
+            const response = await fetch(`/api/drivers/${driverId}/car`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ carId: carId })
+            });
+            if (response.ok) {
+                alert('Машина успешно выбрана');
+                getCurrentCar();
+                getAvailableCars();
+            } else {
+                throw new Error('Ошибка при выборе машины');
+            }
+        } catch (error) {
+            console.error('Ошибка при выборе машины:', error);
+            alert('Произошла ошибка при выборе машины');
+        }
+    }
+
+    // Загрузка данных при загрузке страницы
+    window.onload = () => {
+        getCurrentCar();
+        getAvailableCars();
+    };
+</script>
+</body>
+</html>

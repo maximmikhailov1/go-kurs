@@ -9,16 +9,14 @@
 <body>
 <header>
     <div class="container">
-        <a href="/" class="logo">
-            <img src="../static/images/logo.svg" width="50px" height="50px" alt="Логотип Таксопарка"> <!-- Замените на ваш логотип -->
-        </a>
         <nav>
             <ul>
                 <li><a href="#">О нас</a></li>
                 <li><a href="#">Услуги</a></li>
-                <li><a href="#">Водителям</a></li>
+                <li><a href="/drivers/car">Водителям</a></li>
                 <li><a href="#">Контакты</a></li>
                 <li><a href="/order-taxi" class="btn btn-primary">Заказать такси</a></li>
+                {{if .LoggedIn}} <li><a href="/api/logout" class="btn btn-primary">Выйти</a></li> {{else}}  <li><a href="auth/client" class="btn btn-primary">Войти</a></li> {{end}}
             </ul>
 
         </nav>

@@ -12,8 +12,12 @@ import (
 	"time"
 )
 
-func AuthRender(c *fiber.Ctx) error {
+func AuthClientRender(c *fiber.Ctx) error {
 	return c.Render("authClient", fiber.Map{})
+}
+
+func AuthDriverRender(c *fiber.Ctx) error {
+	return c.Render("authDriver", fiber.Map{})
 }
 
 func SignInClient(c *fiber.Ctx) error {
@@ -186,7 +190,7 @@ func SignUpDriver(c *fiber.Ctx) error {
 	result := initializers.DB.Create(&driver)
 	if result.Error != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
-			"message": "failed to create a client account",
+			"message": "failed to create a driver account",
 			"error":   result.Error.Error(),
 		})
 	}

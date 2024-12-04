@@ -14,6 +14,7 @@ func init() {
 }
 
 // TODO: Человек пришёл со своей машиной
+// TODO: Добавить триггер (gorm hooks)
 func main() {
 	engine := html.New("./public/assets/views", ".tmpl")
 	app := fiber.New(fiber.Config{

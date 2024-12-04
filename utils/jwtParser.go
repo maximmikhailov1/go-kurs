@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func ParseClientJWT(jwtTokenString string) fiber.Map {
+func ParseJWT(jwtTokenString string) fiber.Map {
 	var data fiber.Map
 	if jwtTokenString != "" {
 		tokenByte, err := jwt.Parse(jwtTokenString, func(jwtToken *jwt.Token) (interface{}, error) {

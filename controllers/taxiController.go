@@ -12,7 +12,7 @@ import (
 func OrderTaxiCreateAndRender(c *fiber.Ctx) error {
 	//fmt.Printf("Cookies: %v", c.Cookies("auth"))
 	var clientData fiber.Map
-	clientData = utils.ParseClientJWT(c.Cookies("authClient"))
+	clientData = utils.ParseJWT(c.Cookies("authClient"))
 	var order models.Order
 	order.ClientID = uint(clientData["ID"].(float64))
 

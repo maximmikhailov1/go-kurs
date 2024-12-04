@@ -90,7 +90,7 @@
                 <input type="text" id="secondname" name="secondname">
             </div>
             <div class="form-group">
-                <label for="patronymic">Фамилия</label>
+                <label for="patronymic">Отчество</label>
                 <input type="text" id="patronymic" name="patronymic">
             </div>
         </div>
@@ -151,7 +151,7 @@
 
                     if (response.ok) {
                         // Успешный вход
-                        window.location.href = '/driver/car'; // Перенаправление на главную страницу
+                        window.location.href = '/drivers/car'; // Перенаправление на главную страницу
                     } else {
                         // Ошибка входа
                         const error = await response.json();
@@ -175,7 +175,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username, password, firstName, secondName})
+                    body: JSON.stringify({ username, password, firstName, secondName,patronymic})
                 });
 
                 if (response.ok) {

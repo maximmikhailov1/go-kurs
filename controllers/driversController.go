@@ -4,15 +4,35 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"net/http"
+	"strconv"
 
 	"github.com/maximmikhailov1/go-kurs/initializers"
 	"github.com/maximmikhailov1/go-kurs/models"
 )
 
-func DriverRender(c *fiber.Ctx) error {
-	return c.Render("authDriver", fiber.Map{})
+func DriverCarSelectionRender(c *fiber.Ctx) error {
+	return c.Render("carsDriver", fiber.Map{})
 }
-
+func DriverCarShow(c *fiber.Ctx) error {
+	idDriver, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": "failed to convert id",
+			"error":   err.Error(),
+		})
+	}
+	var driver models.Driver
+	var driversCar models.Car
+	initializers.DB.First(&driver, idDriver)
+	err = initializers.DB.Model(&driver).Association("Car").Find(&driversCar)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": "failed to convert id",
+			"error":   err.Error(),
+		})
+	}
+	return c.Status(http.StatusOK).JSON(driversCar)
+}
 func DriverCreate(c *fiber.Ctx) error {
 	// Получить пользователя
 	var driver models.Driver
@@ -73,6 +93,45 @@ func DriverShow(c *fiber.Ctx) error {
 		"driver":  driver,
 	})
 }
+
+func DriverCarUpdate(c *fiber.Ctx) error {
+	idDriver := c.Params("id")
+	var driver models.Driver
+	result := initializers.DB.First(&driver, idDriver)
+	if result.Error != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": fmt.Sprintf("failed to find driver with id %v", idDriver),
+			"error":   result.Error.Error(),
+		})
+	}
+
+	var newCarIDRequest map[string]string
+	err := c.BodyParser(&newCarIDRequest)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": "failed to parse new car id",
+			"error":   err.Error(),
+		})
+	}
+	var car models.Car
+	result = initializers.DB.First(&car, newCarIDRequest["carId"])
+	if result.Error != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": "failed to find new car",
+			"error":   result.Error.Error(),
+		})
+	}
+	err = initializers.DB.Model(&driver).Association("Car").Replace(&car)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": "failed to associate new car with driver",
+			"error":   err,
+		})
+	}
+
+	return c.Status(http.StatusOK).JSON(fiber.Map{"message": "updated car successfully"})
+}
+
 func DriverUpdate(c *fiber.Ctx) error {
 	//Получить URL с id
 	id := c.Params("id")
