@@ -1,12 +1,14 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/maximmikhailov1/go-kurs/initializers"
 	"github.com/maximmikhailov1/go-kurs/models"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 	"net/http"
 	"os"
 	"time"
@@ -189,6 +191,12 @@ func SignUpDriver(c *fiber.Ctx) error {
 
 	result := initializers.DB.Create(&driver)
 	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrDuplicatedKey) {
+			return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+				"message": "driver with this username already exists",
+				"error":   result.Error.Error(),
+			})
+		}
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"message": "failed to create a driver account",
 			"error":   result.Error.Error(),

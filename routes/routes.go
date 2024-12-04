@@ -53,4 +53,7 @@ func SetupRoutes(app *fiber.App) {
 	app.Put("/api/drivers/:id", controllers.DriverUpdate)
 
 	app.Delete("/api/drivers/:id", controllers.DriverDelete)
+
+	app.Get("/api/orders/driver/:driverId", controllers.OrderDriverShow)
+
 }

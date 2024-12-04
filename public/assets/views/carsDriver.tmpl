@@ -48,13 +48,28 @@
             cursor: pointer;
             border-radius: 5px;
         }
+        .btn {
+            display: inline-block;
+            font-size: 0.75em;
+            float: right;
+            padding: 10px 20px;
+            margin-inline: 15px;
+            text-decoration: none;
+            color: white;
+            background-color: #3498db; /* Цвет похожий на Яндекс */
+            border-radius: 5px;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
         button:hover {
             background-color: #45a049;
         }
     </style>
 </head>
 <body>
-<h1>Машины водителя</h1>
+<h1>Машины водителя <a href="/orders" class="btn btn-primary">К заказам</a> <a href="/" class="btn btn-primary">На главную</a></h1>
+
 <div id="current-car">
     <h2>Текущая машина</h2>
     <p id="current-car-info">Загрузка...</p>
@@ -75,7 +90,7 @@
             const response = await fetch(`/api/drivers/${driverId}/car`);
             const car = await response.json();
             document.getElementById('current-car-info').textContent = `Марка: ${car.FirmName},
-             Модель: ${car.ModelName}, Цвет: ${car.Color}`;
+             Модель: ${car.ModelName}, Цвет: ${car.Color}, Аренда ${car.Rent} руб.`;
         } catch (error) {
             console.error('Ошибка при получении текущей машины:', error);
             document.getElementById('current-car-info').textContent = 'Ошибка при загрузке данных';
@@ -93,7 +108,7 @@
                 const li = document.createElement('li');
                 li.className = 'car-item';
                 li.innerHTML = `
-                        <span>Марка: ${car.FirmName}, Модель: ${car.ModelName}, Цвет ${car.Color}</span>
+                        <span>Марка: ${car.FirmName}, Модель: ${car.ModelName}, Цвет ${car.Color}, Аренда ${car.Rent} руб.</span>
                         <button onclick="selectCar('${car.ID}')">Выбрать</button>
                     `;
                 carList.appendChild(li);
@@ -107,6 +122,8 @@
     // Функция для выбора новой машины
     async function selectCar(carId) {
         try {
+            let responseDriverId = await fetch("/api/drivers/get-id");
+            let driverId = await responseDriverId.json()
             const response = await fetch(`/api/drivers/${driverId}/car`, {
                 method: 'PUT',
                 headers: {

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заказы водителя</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        #ordersList {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .order {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+        .order:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+<h1>Ваши заказы</h1>
+<div id="ordersList">
+    Загрузка заказов...
+</div>
+
+<script>
+    async function getDriverId() {
+        try {
+            const response = await fetch('/api/drivers/get-id');
+            const data = await response.json();
+            console.log('Ответ сервера (getDriverId):', data);
+            if (data) {
+                return data;
+            } else {
+                throw new Error('Некорректный формат ответа сервера');
+            }
+        } catch (error) {
+            console.error('Ошибка при получении ID водителя:', error);
+            throw error;
+        }
+    }
+
+    async function getOrders(driverId) {
+        try {
+            const response = await fetch(`/api/orders/driver/${driverId}`);
+            const orders = await response.json();
+            console.log('Ответ сервера (getOrders):', orders);
+            return orders;
+        } catch (error) {
+            console.error('Ошибка при получении заказов:', error);
+            throw error;
+        }
+    }
+
+    function displayOrders(orders) {
+        const ordersList = document.getElementById('ordersList');
+        if (orders.length === 0) {
+            ordersList.innerHTML = 'У вас пока нет заказов.';
+            return;
+        }
+
+        ordersList.innerHTML = orders.map((order, index) => `
+                <div class="order">
+                    <h3>Заказ #${index + 1}</h3>
+                    <p>Клиент: ${order.FirstName}</p>
+                    <p>Адрес: ${order.address}</p>
+                </div>
+            `).join('');
+    }
+
+    async function init() {
+        const ordersList = document.getElementById('ordersList');
+        try {
+            console.log('Начало выполнения init()');
+            const driverId = await getDriverId();
+            console.log('Полученный ID водителя:', driverId);
+            if (!driverId) {
+                throw new Error('ID водителя не получен');
+            }
+            const orders = await getOrders(driverId);
+            console.log('Полученные заказы:', orders);
+            displayOrders(orders);
+        } catch (error) {
+            console.error('Ошибка в init():', error);
+            ordersList.innerHTML = `Произошла ошибка: ${error.message}`;
+        }
+    }
+
+    init();
+</script>
+</body>
+</html>
+

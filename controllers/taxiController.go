@@ -2,9 +2,11 @@ package controllers
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/maximmikhailov1/go-kurs/initializers"
 	"github.com/maximmikhailov1/go-kurs/models"
 	"github.com/maximmikhailov1/go-kurs/utils"
+	"gorm.io/gorm"
 	"math/rand/v2"
 	"net/http"
 )
@@ -18,14 +20,19 @@ func OrderTaxiCreateAndRender(c *fiber.Ctx) error {
 
 	var driverID uint
 	var drivers []models.Driver
-	result := initializers.DB.Find(&drivers)
+	result := initializers.DB.Not("car_id IS NULL").Find(&drivers)
+	query := initializers.DB.ToSQL(func(tx *gorm.DB) *gorm.DB {
+		return tx.Not("drivers.car_id = ?", nil).Find(&drivers)
+	})
+	log.Info(query)
 	if result.Error != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"message": "failed to find any drivers",
 			"error":   result.Error.Error(),
 		})
 	}
-	driverID = rand.UintN(uint(len(drivers)))
+	log.Info(drivers, '\n')
+	driverID = uint(rand.IntN(len(drivers)))
 	assignedDriver := drivers[driverID]
 	order.DriverID = assignedDriver.ID
 
@@ -37,6 +44,7 @@ func OrderTaxiCreateAndRender(c *fiber.Ctx) error {
 			"error":   err,
 		})
 	}
+	log.Info(assignedDriver)
 	result = initializers.DB.Create(&order)
 	if result.Error != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{

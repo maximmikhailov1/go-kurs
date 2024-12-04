@@ -13,8 +13,7 @@ func init() {
 	initializers.ConnectToDB()
 }
 
-// TODO: Человек пришёл со своей машиной
-// TODO: Добавить триггер (gorm hooks)
+// TODO: Сделать чтобы адрес можно было указать
 func main() {
 	engine := html.New("./public/assets/views", ".tmpl")
 	app := fiber.New(fiber.Config{

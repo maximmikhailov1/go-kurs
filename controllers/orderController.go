@@ -3,13 +3,15 @@ package controllers
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/maximmikhailov1/go-kurs/initializers"
 	"github.com/maximmikhailov1/go-kurs/models"
 	"net/http"
+	"strconv"
 )
 
 func OrderRender(c *fiber.Ctx) error {
-	return c.Render("order", fiber.Map{})
+	return c.Render("orders", fiber.Map{})
 }
 func OrderIndex(c *fiber.Ctx) error {
 	var orders []models.Order
@@ -40,6 +42,21 @@ func OrderShow(c *fiber.Ctx) error {
 		"message": fmt.Sprintf("found order id:%v successfully", id),
 		"order":   order,
 	})
+}
+func OrderDriverShow(c *fiber.Ctx) error {
+	driverIdString := c.Params("driverId")
+	driverId, err := strconv.ParseUint(driverIdString, 10, 0)
+	var clients []models.Client
+	err = initializers.DB.Joins("Orders", initializers.DB.Where(&models.Order{DriverID: uint(driverId)})).Select("first_name").Find(&clients).Error
+	//err = initializers.DB.Find(&clients, "id IN ?", orders).Error
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": "failed to find clients of orders of the driver",
+			"error":   err.Error(),
+		})
+	}
+	log.Info(clients)
+	return c.Status(http.StatusOK).JSON(clients)
 }
 
 //func OrderCreate(c *fiber.Ctx) error {

@@ -12,7 +12,10 @@ func init() {
 }
 
 func main() {
-	err := initializers.DB.AutoMigrate(&models.Driver{}, &models.Car{}, &models.Client{}, &models.Order{})
+	err := initializers.DB.AutoMigrate(&models.Driver{},
+		&models.Car{},
+		&models.Client{},
+		&models.Order{})
 	if err != nil {
 		log.Fatalf("Failed to migrate: %s", err.Error())
 	}

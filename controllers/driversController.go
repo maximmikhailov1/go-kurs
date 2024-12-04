@@ -47,6 +47,7 @@ func DriverCreate(c *fiber.Ctx) error {
 	result := initializers.DB.Create(&driver)
 
 	if result.Error != nil {
+
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"message": "failed to create a driver",
 			"error":   result.Error.Error(),

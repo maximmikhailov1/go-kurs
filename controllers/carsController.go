@@ -36,7 +36,7 @@ func CarCreate(c *fiber.Ctx) error {
 
 func CarsNotUsedIndex(c *fiber.Ctx) error {
 	var cars []models.Car
-	initializers.DB.Find(&cars).Where("is_being_used = ?", false)
+	initializers.DB.Where("is_being_used = ?", false).Find(&cars)
 	return c.Status(http.StatusOK).JSON(cars)
 }
 

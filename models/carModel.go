@@ -5,7 +5,7 @@ type Car struct {
 	FirmName       string
 	ModelName      string
 	RegPlateNumber string
-	VinNumber      string
+	VinNumber      string `gorm:"length:17,uniqueIndex"`
 	Rent           int
 	Color          string
 	IsDetailed     bool
