@@ -2,9 +2,9 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/maximmikhailov1/go-kurs/controllers"
-	"github.com/maximmikhailov1/go-kurs/middleware"
-	"github.com/maximmikhailov1/go-kurs/utils"
+	"github.com/maximmikhailov1/go-kurs/api/controllers"
+	"github.com/maximmikhailov1/go-kurs/api/middleware"
+	"github.com/maximmikhailov1/go-kurs/api/utils"
 )
 
 func SetupRoutes(app *fiber.App) {

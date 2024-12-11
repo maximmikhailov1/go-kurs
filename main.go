@@ -3,14 +3,14 @@ package main
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
-	"github.com/maximmikhailov1/go-kurs/initializers"
-	"github.com/maximmikhailov1/go-kurs/routes"
+	initializers2 "github.com/maximmikhailov1/go-kurs/api/initializers"
+	"github.com/maximmikhailov1/go-kurs/api/routes"
 	"log"
 )
 
 func init() {
-	initializers.LoadEnvVariables()
-	initializers.ConnectToDB()
+	initializers2.LoadEnvVariables()
+	initializers2.ConnectToDB()
 }
 
 // TODO: Сделать чтобы адрес можно было указать

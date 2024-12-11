@@ -3,8 +3,8 @@ package controllers
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"github.com/maximmikhailov1/go-kurs/initializers"
-	"github.com/maximmikhailov1/go-kurs/models"
+	"github.com/maximmikhailov1/go-kurs/api/initializers"
+	"github.com/maximmikhailov1/go-kurs/api/models"
 	"net/http"
 )
 

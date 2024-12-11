@@ -1,21 +1,21 @@
 package main
 
 import (
-	"github.com/maximmikhailov1/go-kurs/initializers"
-	"github.com/maximmikhailov1/go-kurs/models"
+	initializers2 "github.com/maximmikhailov1/go-kurs/api/initializers"
+	models2 "github.com/maximmikhailov1/go-kurs/api/models"
 	"log"
 )
 
 func init() {
-	initializers.LoadEnvVariables()
-	initializers.ConnectToDB()
+	initializers2.LoadEnvVariables()
+	initializers2.ConnectToDB()
 }
 
 func main() {
-	err := initializers.DB.AutoMigrate(&models.Driver{},
-		&models.Car{},
-		&models.Client{},
-		&models.Order{})
+	err := initializers2.DB.AutoMigrate(&models2.Driver{},
+		&models2.Car{},
+		&models2.Client{},
+		&models2.Order{})
 	if err != nil {
 		log.Fatalf("Failed to migrate: %s", err.Error())
 	}

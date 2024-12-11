@@ -3,9 +3,9 @@ package controllers
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
-	"github.com/maximmikhailov1/go-kurs/initializers"
-	"github.com/maximmikhailov1/go-kurs/models"
-	"github.com/maximmikhailov1/go-kurs/utils"
+	"github.com/maximmikhailov1/go-kurs/api/initializers"
+	models2 "github.com/maximmikhailov1/go-kurs/api/models"
+	"github.com/maximmikhailov1/go-kurs/api/utils"
 	"gorm.io/gorm"
 	"math/rand/v2"
 	"net/http"
@@ -15,11 +15,11 @@ func OrderTaxiCreateAndRender(c *fiber.Ctx) error {
 	//fmt.Printf("Cookies: %v", c.Cookies("auth"))
 	var clientData fiber.Map
 	clientData = utils.ParseJWT(c.Cookies("authClient"))
-	var order models.Order
+	var order models2.Order
 	order.ClientID = uint(clientData["ID"].(float64))
 
 	var driverID uint
-	var drivers []models.Driver
+	var drivers []models2.Driver
 	result := initializers.DB.Not("car_id IS NULL").Find(&drivers)
 	query := initializers.DB.ToSQL(func(tx *gorm.DB) *gorm.DB {
 		return tx.Not("drivers.car_id = ?", nil).Find(&drivers)
@@ -36,7 +36,7 @@ func OrderTaxiCreateAndRender(c *fiber.Ctx) error {
 	assignedDriver := drivers[driverID]
 	order.DriverID = assignedDriver.ID
 
-	var car models.Car
+	var car models2.Car
 	err := initializers.DB.Model(&assignedDriver).Association("Car").Find(&car)
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{

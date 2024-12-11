@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/maximmikhailov1/go-kurs/initializers"
-	"github.com/maximmikhailov1/go-kurs/models"
+	"github.com/maximmikhailov1/go-kurs/api/initializers"
+	models2 "github.com/maximmikhailov1/go-kurs/api/models"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"net/http"
@@ -24,8 +24,8 @@ func AuthDriverRender(c *fiber.Ctx) error {
 
 func SignInClient(c *fiber.Ctx) error {
 	timeStart := time.Now().UnixMilli()
-	var clientForm models.Client
-	var client models.Client
+	var clientForm models2.Client
+	var client models2.Client
 	err := c.BodyParser(&clientForm)
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -82,7 +82,7 @@ func SignInClient(c *fiber.Ctx) error {
 }
 
 func SignUpClient(c *fiber.Ctx) error {
-	var client models.Client
+	var client models2.Client
 
 	err := c.BodyParser(&client)
 	if err != nil {
@@ -114,8 +114,8 @@ func SignUpClient(c *fiber.Ctx) error {
 
 func SignInDriver(c *fiber.Ctx) error {
 	timeStart := time.Now().UnixMilli()
-	var driverForm models.Driver
-	var driver models.Driver
+	var driverForm models2.Driver
+	var driver models2.Driver
 	err := c.BodyParser(&driverForm)
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -172,7 +172,7 @@ func SignInDriver(c *fiber.Ctx) error {
 }
 
 func SignUpDriver(c *fiber.Ctx) error {
-	var driver models.Driver
+	var driver models2.Driver
 
 	err := c.BodyParser(&driver)
 	if err != nil {
